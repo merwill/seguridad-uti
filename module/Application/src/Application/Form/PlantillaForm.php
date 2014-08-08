@@ -143,7 +143,7 @@ class PlantillaForm extends Form{
 				         ->setAttribute('title', $title)
 				         ->setAttribute('class', $class)
 			        	 ->setAttribute('placeholder', $placeholder)
-			        	 ->setAttribute('required', $required)
+			        	 //->setAttribute('required', $required)
 			        	 ->setAttribute('disabled', $disabled )
 			        	 ->setAttribute('for', $label );
 			        if($readonly) $objetoText->setAttribute('readonly', $readonly );

@@ -2,21 +2,22 @@
 return array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
-    	'Application',
+        'MisLibrerias',
         'DoctrineModule',
         'DoctrineORMModule',
     	'AuthDoctrine',
-        'MisLibrerias',
+    	'Application',
+        'Usuarios',
+        'Administracion',
     		
     		
     		
         //'Aplicaciones',
         //'Entidades',
         //'EstructuraOrganizacional',
-        'Formulacion',
+        //'Formulacion',
         //'Parametros',
-        'Perfiles',
-        'Usuarios',
+        //'Perfiles',
     		
        // 'CsnNavigation',
 

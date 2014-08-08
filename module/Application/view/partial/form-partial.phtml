@@ -19,6 +19,7 @@ $form->prepare();
 <?php foreach ($form as $element) { ?>
 
     <?php if(!$element instanceof Zend\Form\Element\Submit){  ?>
+    <?php if(!$element instanceof Zend\Form\Element\Hidden){  ?>
 
         <div class="form-group<?php if ($this->formElementErrors($element)) echo " has-error" ?>">
             <span class="col-sm-3 control-label">
@@ -27,13 +28,19 @@ $form->prepare();
             </span>
 
             <div class="col-sm-9">
-                <?php echo $this->formElement($element);
-                if ($this->formElementErrors($element)) ?>
-                <span >
-                    <?php echo $this->formElementErrors($element) ?>
-                </span>
+                    <?php echo $this->formElement($element);
+                    if ($this->formElementErrors($element)) ?>
+                    <span >
+                        <?php echo $this->formElementErrors($element) ?>
+                    </span>
             </div>
         </div>
+    <?php }else{  ?>
+            <?php //echo $this->formLabel($element); ?>
+            <?php echo $this->formElement($element);?>
+            
+    <?php }  ?>
+
 
     <?php }else{  ?>
 
@@ -42,6 +49,7 @@ $form->prepare();
             <div class="col-sm-offset-3 col-sm-9">
                 <?php echo $this->formElement($element);
                 if ($this->formElementErrors($element)) ?>
+                <button type="button" class="btn default red" data-dismiss="modal">Cancelar</button>
                 <span class="text-danger"><?php echo $this->formElementErrors($element) ?></span>
             </div>
         </div>
@@ -54,5 +62,4 @@ $form->prepare();
 
 <?php echo $this->form()->closeTag($form); ?>
 
-<?php   ?>
 

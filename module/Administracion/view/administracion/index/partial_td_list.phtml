@@ -1,0 +1,13 @@
+<div class="crud-list-td">
+    <a href="#" class="btn btn-xs <?php echo $value->getEstado()=='1'?'red':'green'; ?> crud-change-state" title="CAMBIAR ESTADO" data-url="<?php echo $this->url('administracion/default', array('controller' => 'index', 'action' => 'cambiarestado')); ?>" data-url-callback="<?php echo $this->url('administracion/default', array('controller' => 'index', 'action' => 'parametrica')); ?>" data-id="<?php echo $value->getId(); ?>">
+        <?php echo $value->getEstado()=='1'?'No Vigente':'Vigente'; ?>
+    </a>
+    <!-- <a href="<?php //echo $this->url('administracion/default', array('controller' => 'index', 'action' => 'editar','id' => $value->getId())); ?>" data-target="#modal_nuevo" data-toggle="modal" class="btn btn-xs blue" title="EDITAR"> -->
+    <a href="#" onclick="getModal('<?php echo $this->url('administracion/default', array('controller' => 'index', 'action' => 'editar','id' => $value->getId())); ?>')" class="btn btn-xs blue" title="EDITAR">
+        <i class="fa fa-edit"></i>
+    </a>
+    <a href="#" class="btn btn-xs red crud-delete" title="ELIMINAR" data-url="<?php echo $this->url('administracion/default', array('controller' => 'index', 'action' => 'eliminar')); ?>" data-url-callback="<?php echo $this->url('administracion/default', array('controller' => 'index', 'action' => 'parametrica')); ?>" data-id="<?php echo $value->getId(); ?>">
+        <i class="fa fa-times-circle"></i>
+    </a>
+</div>
+

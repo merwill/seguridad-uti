@@ -1,303 +1,659 @@
 var FormValidation = function () {
+	
+	var ajaxEnviar = function (form) {
+		//$('#modal_nuevo').modal('hide');
+        App.startPageLoading();
+        $.ajax({
+            type: $(form).attr('method'),
+            url: $(form).attr('action'),
+            data: $(form).serialize(),
+            dataType: "json",
+            success: function (data) {
+                if(data.respuesta){ 	
+                    App.startPageLoading();
+                    jQuery('#content').load('/administracion/index/parametrica');
+                    App.showMessage(data.mensaje);
+                }else{
+                    App.showMessage(data.mensaje,'ERROR');
+                }
+                App.stopPageLoading();
+            },
+            error : function(jqXHR, status, error) {
+                App.showMessage('Ocurrio un error al ejecutar la p&aacute;gina.','ERROR');
+                App.stopPageLoading();
+            },
+        });
+        //$('#modal_nuevo').html('');
+	}
+	
+    var handleFormSector = function() {
+        //formSector
+        var form1 = $('#formInsumo'); ///onsole.log(form1);
+        var error1 = $('.alert-danger', form1);
+        var success1 = $('.alert-success', form1);
+//        var _ajax_enviar = function () {
+//            var e = window, a = 'inner';
+//            if (!('innerWidth' in window)) {
+//                a = 'client';
+//                e = document.documentElement || document.body;
+//            }
+//            return {
+//                width: e[a + 'Width'],
+//                height: e[a + 'Height']
+//            }
+//        }
+        form1.validate({ 
+            errorElement: 'span', //default input error message container
+            errorClass: 'help-block', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            rules: {
+            	precioUnitario: {
+                    required: true
+                }
+//                idPartida: {
+//                	required: true
+//                },
+//                descripcion: {
+//                    required: true
+//                    //maxlength: 10
+//                },
+                
+            },
+            messages: { // custom messages for radio buttons and checkboxes
+            		precioUnitario: {
+                        required: "Seleccione una opcion"
+                    },
+//                    idPartida: {
+//                    	required: "Seleccione una opcion"
+//                    },
+//                    descripcion: {
+//                    	required: "Debe registrar la descripci&oacute;n"
+//                    },
+                },
 
-    var handleValidation1 = function() {
-        // for more info visit the official plugin documentation: 
-            // http://docs.jquery.com/Plugins/Validation
+            invalidHandler: function (event, validator) { //display error alert on form submit              
+                success1.hide();
+                error1.show();
+                App.scrollTo(error1, -200);
+            },
 
-            var form1 = $('#form_sample_1');
-            var error1 = $('.alert-danger', form1);
-            var success1 = $('.alert-success', form1);
+            highlight: function (element) { // hightlight error inputs
+                $(element)
+                    .closest('.form-group').addClass('has-error'); // set error class to the control group
+            },
 
-            form1.validate({
-                errorElement: 'span', //default input error message container
-                errorClass: 'help-block', // default input error message class
-                focusInvalid: false, // do not focus the last invalid input
-                ignore: "",
-                rules: {
-                    name: {
-                        minlength: 2,
-                        required: true
+            unhighlight: function (element) { // revert the change done by hightlight
+                $(element)
+                    .closest('.form-group').removeClass('has-error'); // set error class to the control group
+            },
+
+            success: function (label) {
+                label
+                    .closest('.form-group').removeClass('has-error'); // set success class to the control group
+            },
+
+            submitHandler: function (form) {
+                ajaxEnviar(form);
+            	//alert("www");
+            }
+        });
+    }
+    
+ /*   var handleFormBanco = function() {
+        //formSector
+        var form1 = $('#formBanco');
+        var error1 = $('.alert-danger', form1);
+        var success1 = $('.alert-success', form1);
+
+        form1.validate({
+            errorElement: 'span', //default input error message container
+            errorClass: 'help-block', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            rules: {
+                descripcion: {
+                    maxlength: 100,
+                    required: true
+                },
+                sigla: {
+                    required: false,
+                    maxlength: 10
+                },
+                
+            },
+            messages: { // custom messages for radio buttons and checkboxes
+                    descripcion: {
+                        required: "Debe registrar la descripci&oacute;n",
+                        maxlength: "Como mínimo 100 caracteres"
                     },
-                    email: {
-                        required: true,
-                        email: true
-                    },
-                    url: {
-                        required: true,
-                        url: true
-                    },
-                    number: {
-                        required: true,
-                        number: true
-                    },
-                    digits: {
-                        required: true,
-                        digits: true
-                    },
-                    creditcard: {
-                        required: true,
-                        creditcard: true
-                    },
-                    occupation: {
-                        minlength: 5,
-                    },
-                    category: {
-                        required: true
+                    sigla: {
+                        maxlength: "Como mínimo 10 caracteres"
                     }
                 },
 
-                invalidHandler: function (event, validator) { //display error alert on form submit              
-                    success1.hide();
-                    error1.show();
-                    App.scrollTo(error1, -200);
-                },
+            invalidHandler: function (event, validator) { //display error alert on form submit              
+                success1.hide();
+                error1.show();
+                App.scrollTo(error1, -200);
+            },
 
-                highlight: function (element) { // hightlight error inputs
-                    $(element)
-                        .closest('.form-group').addClass('has-error'); // set error class to the control group
-                },
+            highlight: function (element) { // hightlight error inputs
+                $(element)
+                    .closest('.form-group').addClass('has-error'); // set error class to the control group
+            },
 
-                unhighlight: function (element) { // revert the change done by hightlight
-                    $(element)
-                        .closest('.form-group').removeClass('has-error'); // set error class to the control group
-                },
+            unhighlight: function (element) { // revert the change done by hightlight
+                $(element)
+                    .closest('.form-group').removeClass('has-error'); // set error class to the control group
+            },
 
-                success: function (label) {
-                    label
-                        .closest('.form-group').removeClass('has-error'); // set success class to the control group
-                },
+            success: function (label) {
+                label
+                    .closest('.form-group').removeClass('has-error'); // set success class to the control group
+            },
 
-                submitHandler: function (form) {
-                    success1.show();
-                    error1.hide();
-                }
-            });
-
+            submitHandler: function (form) {
+            	ajaxEnviar(form);
+            }
+        });
     }
+    
+    var handleFormRamo = function() {
+        //formSector
+        var form1 = $('#formRamo');
+        var error1 = $('.alert-danger', form1);
+        var success1 = $('.alert-success', form1);
 
-    var handleValidation2 = function() {
-        // for more info visit the official plugin documentation: 
-            // http://docs.jquery.com/Plugins/Validation
-
-            var form2 = $('#form_sample_2');
-            var error2 = $('.alert-danger', form2);
-            var success2 = $('.alert-success', form2);
-
-            form2.validate({
-                errorElement: 'span', //default input error message container
-                errorClass: 'help-block', // default input error message class
-                focusInvalid: false, // do not focus the last invalid input
-                ignore: "",
-                rules: {
-                    name: {
-                        minlength: 2,
-                        required: true
-                    },
-                    email: {
-                        required: true,
-                        email: true
-                    },
-                    email: {
-                        required: true,
-                        email: true
-                    },
-                    url: {
-                        required: true,
-                        url: true
-                    },
-                    number: {
-                        required: true,
-                        number: true
-                    },
-                    digits: {
-                        required: true,
-                        digits: true
-                    },
-                    creditcard: {
-                        required: true,
-                        creditcard: true
-                    },
+        form1.validate({
+            errorElement: 'span', //default input error message container
+            errorClass: 'help-block', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            rules: {
+                descripcion: {
+                    maxlength: 100,
+                    required: true
                 },
-
-                invalidHandler: function (event, validator) { //display error alert on form submit              
-                    success2.hide();
-                    error2.show();
-                    App.scrollTo(error2, -200);
+                sigla: {
+                    required: false,
+                    maxlength: 10
                 },
-
-                errorPlacement: function (error, element) { // render error placement for each input type
-                    var icon = $(element).parent('.input-icon').children('i');
-                    icon.removeClass('fa-check').addClass("fa-warning");  
-                    icon.attr("data-original-title", error.text()).tooltip({'container': 'body'});
-                },
-
-                highlight: function (element) { // hightlight error inputs
-                    $(element)
-                        .closest('.form-group').addClass('has-error'); // set error class to the control group   
-                },
-
-                unhighlight: function (element) { // revert the change done by hightlight
-                    
-                },
-
-                success: function (label, element) {
-                    var icon = $(element).parent('.input-icon').children('i');
-                    $(element).closest('.form-group').removeClass('has-error').addClass('has-success'); // set success class to the control group
-                    icon.removeClass("fa-warning").addClass("fa-check");
-                },
-
-                submitHandler: function (form) {
-                    success2.show();
-                    error2.hide();
-                }
-            });
-
-
-    }
-
-    var handleValidation3 = function() {
-        // for more info visit the official plugin documentation: 
-        // http://docs.jquery.com/Plugins/Validation
-
-            var form3 = $('#form_sample_3');
-            var error3 = $('.alert-danger', form3);
-            var success3 = $('.alert-success', form3);
-
-            //IMPORTANT: update CKEDITOR textarea with actual content before submit
-            form3.on('submit', function() {
-                for(var instanceName in CKEDITOR.instances) {
-                    CKEDITOR.instances[instanceName].updateElement();
-                }
-            })
-
-            form3.validate({
-                errorElement: 'span', //default input error message container
-                errorClass: 'help-block', // default input error message class
-                focusInvalid: false, // do not focus the last invalid input
-                ignore: "",
-                rules: {
-                    name: {
-                        minlength: 2,
-                        required: true
+                
+            },
+            messages: { // custom messages for radio buttons and checkboxes
+                    descripcion: {
+                        required: "Debe registrar la descripci&oacute;n",
+                        maxlength: "Como mínimo 100 caracteres"
                     },
-                    email: {
-                        required: true,
-                        email: true
-                    },
-                    category: {
-                        required: true
-                    },
-                    options1: {
-                        required: true
-                    },
-                    options2: {
-                        required: true
-                    },
-                    occupation: {
-                        minlength: 5,
-                    },
-                    membership: {
-                        required: true
-                    },
-                    service: {
-                        required: true,
-                        minlength: 2
-                    },
-                    markdown: {
-                        required: true
-                    },
-                    editor1: {
-                        required: true
-                    },
-                    editor2: {
-                        required: true
+                    sigla: {
+                        maxlength: "Como mínimo 10 caracteres"
                     }
                 },
 
-                messages: { // custom messages for radio buttons and checkboxes
-                    membership: {
-                        required: "Please select a Membership type"
+            invalidHandler: function (event, validator) { //display error alert on form submit              
+                success1.hide();
+                error1.show();
+                App.scrollTo(error1, -200);
+            },
+
+            highlight: function (element) { // hightlight error inputs
+                $(element)
+                    .closest('.form-group').addClass('has-error'); // set error class to the control group
+            },
+
+            unhighlight: function (element) { // revert the change done by hightlight
+                $(element)
+                    .closest('.form-group').removeClass('has-error'); // set error class to the control group
+            },
+
+            success: function (label) {
+                label
+                    .closest('.form-group').removeClass('has-error'); // set success class to the control group
+            },
+
+            submitHandler: function (form) {
+            	ajaxEnviar(form);
+            }
+        });
+    }
+    
+    var handleFormGestion = function() {
+        //formSector
+        var form1 = $('#formGestion');
+        var error1 = $('.alert-danger', form1);
+        var success1 = $('.alert-success', form1);
+
+        form1.validate({
+            errorElement: 'span', //default input error message container
+            errorClass: 'help-block', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            rules: {
+                gestion: {
+                    number: true,
+                    maxlength: 4,
+                    minlength: 4
+                },
+                n_tramite: {
+                    number: true
+                },
+                n_modificacion_datos: {
+                    number: true
+                },
+                n_resolucion: {
+                    number: true
+                },
+                
+            },
+            messages: { // custom messages for radio buttons and checkboxes
+                    gestion: {
+                        number: "Solo Números",
+                        maxlength: "La gestión debe ser de 4 digitos"
                     },
-                    service: {
-                        required: "Please select  at least 2 types of Service",
-                        minlength: jQuery.format("Please select  at least {0} types of Service")
+                    n_tramite: {
+                        number: "Solo Números",
+                    },
+                    n_modificacion_datos: {
+                        number: "Solo Números",
+                    },
+                    n_resolucion: {
+                        number: "Solo Números",
+                    },
+             },
+
+            invalidHandler: function (event, validator) { //display error alert on form submit              
+                success1.hide();
+                error1.show();
+                App.scrollTo(error1, -200);
+            },
+
+            highlight: function (element) { // hightlight error inputs
+                $(element)
+                    .closest('.form-group').addClass('has-error'); // set error class to the control group
+            },
+
+            unhighlight: function (element) { // revert the change done by hightlight
+                $(element)
+                    .closest('.form-group').removeClass('has-error'); // set error class to the control group
+            },
+
+            success: function (label) {
+                label
+                    .closest('.form-group').removeClass('has-error'); // set success class to the control group
+            },
+
+            submitHandler: function (form) {
+            	ajaxEnviar(form);
+            }
+        });
+    }
+    
+    var handleFormRegional = function() {
+        //formSector
+        var form1 = $('#formRegional');
+        var error1 = $('.alert-danger', form1);
+        var success1 = $('.alert-success', form1);
+
+        form1.validate({
+            errorElement: 'span', //default input error message container
+            errorClass: 'help-block', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            rules: {
+                regional: {
+                    required: true,
+                },
+                
+            },
+            messages: { // custom messages for radio buttons and checkboxes
+                regional: {
+                    required: "Registrar el nombre de la regional",
+                },
+             },
+
+            invalidHandler: function (event, validator) { //display error alert on form submit              
+                success1.hide();
+                error1.show();
+                App.scrollTo(error1, -200);
+            },
+
+            highlight: function (element) { // hightlight error inputs
+                $(element)
+                    .closest('.form-group').addClass('has-error'); // set error class to the control group
+            },
+
+            unhighlight: function (element) { // revert the change done by hightlight
+                $(element)
+                    .closest('.form-group').removeClass('has-error'); // set error class to the control group
+            },
+
+            success: function (label) {
+                label
+                    .closest('.form-group').removeClass('has-error'); // set success class to the control group
+            },
+
+            submitHandler: function (form) {
+            	ajaxEnviar(form);
+            }
+        });
+    }
+    
+    var handleFormTipoCuenta = function() {
+        //formSector
+        var form1 = $('#formTipoCuenta');
+        var error1 = $('.alert-danger', form1);
+        var success1 = $('.alert-success', form1);
+
+        form1.validate({
+            errorElement: 'span', //default input error message container
+            errorClass: 'help-block', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            rules: {
+                descripcion: {
+                    maxlength: 100,
+                    required: true
+                },
+                sigla: {
+                    required: false,
+                    maxlength: 10
+                },
+                
+            },
+            messages: { // custom messages for radio buttons and checkboxes
+                    descripcion: {
+                        required: "Debe registrar la descripci&oacute;n",
+                        maxlength: "Como mínimo 100 caracteres"
+                    },
+                    sigla: {
+                        maxlength: "Como mínimo 10 caracteres"
                     }
                 },
 
-                errorPlacement: function (error, element) { // render error placement for each input type
-                    if (element.parent(".input-group").size() > 0) {
-                        error.insertAfter(element.parent(".input-group"));
-                    } else if (element.attr("data-error-container")) { 
-                        error.appendTo(element.attr("data-error-container"));
-                    } else if (element.parents('.radio-list').size() > 0) { 
-                        error.appendTo(element.parents('.radio-list').attr("data-error-container"));
-                    } else if (element.parents('.radio-inline').size() > 0) { 
-                        error.appendTo(element.parents('.radio-inline').attr("data-error-container"));
-                    } else if (element.parents('.checkbox-list').size() > 0) {
-                        error.appendTo(element.parents('.checkbox-list').attr("data-error-container"));
-                    } else if (element.parents('.checkbox-inline').size() > 0) { 
-                        error.appendTo(element.parents('.checkbox-inline').attr("data-error-container"));
-                    } else {
-                        error.insertAfter(element); // for other inputs, just perform default behavior
+            invalidHandler: function (event, validator) { //display error alert on form submit              
+                success1.hide();
+                error1.show();
+                App.scrollTo(error1, -200);
+            },
+
+            highlight: function (element) { // hightlight error inputs
+                $(element)
+                    .closest('.form-group').addClass('has-error'); // set error class to the control group
+            },
+
+            unhighlight: function (element) { // revert the change done by hightlight
+                $(element)
+                    .closest('.form-group').removeClass('has-error'); // set error class to the control group
+            },
+
+            success: function (label) {
+                label
+                    .closest('.form-group').removeClass('has-error'); // set success class to the control group
+            },
+
+            submitHandler: function (form) {
+            	ajaxEnviar(form);
+            }
+        });
+    }
+    
+    var handleFormTipoTramite = function() {
+        //formSector
+        var form1 = $('#formTipoTramite');
+        var error1 = $('.alert-danger', form1);
+        var success1 = $('.alert-success', form1);
+
+        form1.validate({
+            errorElement: 'span', //default input error message container
+            errorClass: 'help-block', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            rules: {
+                descripcion: {
+                    maxlength: 100,
+                    required: true
+                },
+                sigla: {
+                    required: false,
+                    maxlength: 10
+                },
+                costo: {
+                    required: true,
+                    maxlength: 10
+                },
+                
+            },
+            messages: { // custom messages for radio buttons and checkboxes
+                    descripcion: {
+                        required: "Debe registrar la descripci&oacute;n",
+                        maxlength: "Como mínimo 100 caracteres"
+                    },
+                    sigla: {
+                        maxlength: "Como mínimo 10 caracteres"
+                    },
+                    descripcion: {
+                        required: "Debe registrar el costo del trámite",
+                    },
+                },
+
+            invalidHandler: function (event, validator) { //display error alert on form submit              
+                success1.hide();
+                error1.show();
+                App.scrollTo(error1, -200);
+            },
+
+            highlight: function (element) { // hightlight error inputs
+                $(element)
+                    .closest('.form-group').addClass('has-error'); // set error class to the control group
+            },
+
+            unhighlight: function (element) { // revert the change done by hightlight
+                $(element)
+                    .closest('.form-group').removeClass('has-error'); // set error class to the control group
+            },
+
+            success: function (label) {
+                label
+                    .closest('.form-group').removeClass('has-error'); // set success class to the control group
+            },
+
+            submitHandler: function (form) {
+            	ajaxEnviar(form);
+            }
+        });
+    }
+    
+    var handleFormTipoProceso = function() {
+        //formSector
+        var form1 = $('#formTipoProceso');
+        var error1 = $('.alert-danger', form1);
+        var success1 = $('.alert-success', form1);
+
+        form1.validate({
+            errorElement: 'span', //default input error message container
+            errorClass: 'help-block', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            rules: {
+                nombre: {
+                    maxlength: 100,
+                    required: true
+                },
+                sigla: {
+                    required: false,
+                    maxlength: 10
+                },
+                
+            },
+            messages: { // custom messages for radio buttons and checkboxes
+                    nombre: {
+                        required: "Debe registrar el nombre del proceso",
+                        maxlength: "Como mínimo 100 caracteres"
+                    },
+                    sigla: {
+                        maxlength: "Como mínimo 10 caracteres"
                     }
                 },
 
-                invalidHandler: function (event, validator) { //display error alert on form submit   
-                    success3.hide();
-                    error3.show();
-                    App.scrollTo(error3, -200);
-                },
+            invalidHandler: function (event, validator) { //display error alert on form submit              
+                success1.hide();
+                error1.show();
+                App.scrollTo(error1, -200);
+            },
 
-                highlight: function (element) { // hightlight error inputs
-                   $(element)
-                        .closest('.form-group').addClass('has-error'); // set error class to the control group
-                },
+            highlight: function (element) { // hightlight error inputs
+                $(element)
+                    .closest('.form-group').addClass('has-error'); // set error class to the control group
+            },
 
-                unhighlight: function (element) { // revert the change done by hightlight
-                    $(element)
-                        .closest('.form-group').removeClass('has-error'); // set error class to the control group
-                },
+            unhighlight: function (element) { // revert the change done by hightlight
+                $(element)
+                    .closest('.form-group').removeClass('has-error'); // set error class to the control group
+            },
 
-                success: function (label) {
-                    label
-                        .closest('.form-group').removeClass('has-error'); // set success class to the control group
-                },
+            success: function (label) {
+                label
+                    .closest('.form-group').removeClass('has-error'); // set success class to the control group
+            },
 
-                submitHandler: function (form) {
-                    success3.show();
-                    error3.hide();
-                }
-
-            });
-
-             //apply validation on select2 dropdown value change, this only needed for chosen dropdown integration.
-            $('.select2me', form3).change(function () {
-                form3.validate().element($(this)); //revalidate the chosen dropdown value and show error or success message for the input
-            });
+            submitHandler: function (form) {
+            	ajaxEnviar(form);
+            }
+        });
     }
+    
+    var handleFormTipoBanco = function() {
+        //formSector
+        var form1 = $('#formTipoBanco');
+        var error1 = $('.alert-danger', form1);
+        var success1 = $('.alert-success', form1);
 
-    var handleWysihtml5 = function() {
-        if (!jQuery().wysihtml5) {
-            
-            return;
-        }
+        form1.validate({
+            errorElement: 'span', //default input error message container
+            errorClass: 'help-block', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            rules: {
+                banco_id: {
+                    required: true
+                },
+                tipo_cuenta_id: {
+                    required: true,
+                },
+                numero_cuenta: {
+                    required: true,
+                },
+            },
+            messages: { // custom messages for radio buttons and checkboxes
+                    banco_id: {
+                        required: "Debe seleccionar el banco",
+                    },
+                    tipo_cuenta_id: {
+                        required: "Debe seleccionar el tipo de cuenta",
+                    },
+                    numero_cuenta: {
+                        required: "Registrar el número de cuenta",
+                    }
+                },
 
-        if ($('.wysihtml5').size() > 0) {
-            $('.wysihtml5').wysihtml5({
-                "stylesheets": ["assets/plugins/bootstrap-wysihtml5/wysiwyg-color.css"]
-            });
-        }
+            invalidHandler: function (event, validator) { //display error alert on form submit              
+                success1.hide();
+                error1.show();
+                App.scrollTo(error1, -200);
+            },
+
+            highlight: function (element) { // hightlight error inputs
+                $(element)
+                    .closest('.form-group').addClass('has-error'); // set error class to the control group
+            },
+
+            unhighlight: function (element) { // revert the change done by hightlight
+                $(element)
+                    .closest('.form-group').removeClass('has-error'); // set error class to the control group
+            },
+
+            success: function (label) {
+                label
+                    .closest('.form-group').removeClass('has-error'); // set success class to the control group
+            },
+
+            submitHandler: function (form) {
+            	ajaxEnviar(form);
+            }
+        });
     }
+    
+    var handleFormTipoEntidad = function() {
+        //formSector
+        var form1 = $('#formTipoEntidad');
+        var error1 = $('.alert-danger', form1);
+        var success1 = $('.alert-success', form1);
 
+        form1.validate({
+            errorElement: 'span', //default input error message container
+            errorClass: 'help-block', // default input error message class
+            focusInvalid: false, // do not focus the last invalid input
+            ignore: "",
+            rules: {
+                descripcion: {
+                    required: true
+                },
+                sector_entidad_id: {
+                    required: true,
+                },
+            },
+            messages: { // custom messages for radio buttons and checkboxes
+                    descripcion: {
+                        required: "Debe registrar la descripción",
+                    },
+                    sector_entidad_id: {
+                        required: "Debe seleccionar el tipo de sector",
+                    },
+                },
+
+            invalidHandler: function (event, validator) { //display error alert on form submit              
+                success1.hide();
+                error1.show();
+                App.scrollTo(error1, -200);
+            },
+
+            highlight: function (element) { // hightlight error inputs
+                $(element)
+                    .closest('.form-group').addClass('has-error'); // set error class to the control group
+            },
+
+            unhighlight: function (element) { // revert the change done by hightlight
+                $(element)
+                    .closest('.form-group').removeClass('has-error'); // set error class to the control group
+            },
+
+            success: function (label) {
+                label
+                    .closest('.form-group').removeClass('has-error'); // set success class to the control group
+            },
+
+            submitHandler: function (form) {
+            	ajaxEnviar(form);
+            }
+        });
+    }
+    */
     return {
         //main function to initiate the module
         init: function () {
 
-            handleWysihtml5();
-            handleValidation1();
-            handleValidation2();
-            handleValidation3();
-
+            handleFormSector();
+           // ajaxEnviar('#formInsumo');
+//            handleFormBanco();
+//            handleFormRamo();
+//            handleFormGestion();
+//            handleFormRegional();
+//            handleFormTipoCuenta();
+//            handleFormTipoTramite();
+//            handleFormTipoProceso();
+//            handleFormTipoBanco();
+//            handleFormTipoEntidad();
         }
 
     };

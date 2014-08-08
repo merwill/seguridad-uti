@@ -996,6 +996,130 @@ var App = function () {
         }
     }
 
+    //Añadido por Ing.Ivan Callapa Quiroz
+    var handlePaginatorTable = function () {
+        
+        jQuery('body').on('click','.pagination > li.li-class > a.page-class', function (e) {
+            var page = jQuery(this).attr("data-page");
+            var id = $(this).attr("data-id");
+            var url = jQuery(this).attr("data-url");
+            e.preventDefault();
+            App.startPageLoading();
+            $.ajax({
+                url : url,
+                data : { page : page, id : id },
+                type: "GET",
+                cache: false,
+                dataType: "html",
+                success : function(data) {
+                        App.stopPageLoading();
+                    $('#content').html(data);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    pageContentBody.html('<h4>OCURRIO UN ERROR EN LA CARGA DE LA PAGINA..</h4>');
+                    App.stopPageLoading();
+                }
+            });
+            
+        });
+    }
+    
+    var handleCrud = function () {
+        
+        jQuery('.jstree-anchor').on('click', function (e) {
+        	$('#modal_nuevo').html('');
+            var id = $(this).attr("data-id");
+            var url = jQuery(this).attr("data-url");
+            e.preventDefault();
+            App.startPageLoading();
+            $.ajax({
+                url : url,
+                data : { id : id },
+                type: "GET",
+                cache: false,
+                dataType: "html",
+                success : function(data) {
+                    App.stopPageLoading();
+                    $('#content').html(data);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    pageContentBody.html('<h4>OCURRIO UN ERROR EN LA CARGA DE LA PAGINA..</h4>');
+                    App.stopPageLoading();
+                }
+            });
+            
+        });
+        
+        jQuery('body').on('click','div.crud-list-td > a.crud-delete',function (e) {
+            var id = $(this).attr("data-id");
+            var url_callback = jQuery(this).attr("data-url-callback");
+            var url = jQuery(this).attr("data-url");
+            bootbox.confirm("Est&aacute; seguro que desea eliminar el registro?", function(result) {
+                if(result){
+                    e.preventDefault();
+                    App.startPageLoading();
+                    $.ajax({
+                        url : url,
+                        data : { id : id },
+                        type: 'GET',
+                        async: false,
+                        dataType: "json",
+                        success : function(data) {
+                            App.stopPageLoading();
+                            if(data.respuesta){ 	
+                                App.startPageLoading();
+                                jQuery('#content').load(url_callback);
+                                App.stopPageLoading();
+                                App.showMessage(data.mensaje);    
+                            }else{
+                                App.showMessage(data.mensaje,'ERROR');
+                            }
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            App.showMessage('Ocurrio un error al ejecutar la p&aacute;gina.','ERROR');
+                            App.stopPageLoading();
+                        }
+                    });
+                }
+                
+            });
+            
+        });
+        
+        jQuery('body').on('click','div.crud-list-td > a.crud-change-state',function (e) {
+            var id = $(this).attr("data-id");
+            var url_callback = jQuery(this).attr("data-url-callback");
+            var url = jQuery(this).attr("data-url");
+            e.preventDefault();
+            App.startPageLoading();
+            $.ajax({
+                url : url,
+                data : { id : id},
+                type: 'GET',
+                async: false,
+                dataType: "json",
+                success : function(data) {
+                    App.stopPageLoading();
+                    if(data.respuesta){ 	
+                        App.startPageLoading();
+                        jQuery('#content').load(url_callback);
+                        App.stopPageLoading();
+                        App.showMessage(data.mensaje);    
+                    }else{
+                        App.showMessage(data.mensaje,'ERROR');
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    App.showMessage('Ocurrio un error al ejecutar la p&aacute;gina.','ERROR');
+                    App.stopPageLoading();
+                }
+            });
+            
+        });
+    }
+    
+    //Fin de añadido
+    
     //* END:CORE HANDLERS *//
 
     return {
@@ -1035,6 +1159,8 @@ var App = function () {
             handleAccordions(); //handles accordions 
             handleModals(); // handle modals
             handleFullScreenMode(); // handles full screen
+            handlePaginatorTable(); // icallapa
+            handleCrud(); // icallapa
         },
 
         //main function to initiate core javascript after ajax complete
@@ -1169,6 +1295,23 @@ var App = function () {
             $('body').append('<div class="page-loading"><img src="assets/img/loading-spinner-grey.gif"/>&nbsp;&nbsp;<span>' + (message ? message : 'Loading...') + '</span></div>');
         },
 
+        ///Añadido por Ing. Ivan Callapa Quiroz
+        showMessage: function(message,sw) {
+        	$.notific8('zindex', 11500);
+            $.notific8(message, {
+                life: 3000,
+                theme: sw ? 'ruby' : 'lime',
+                sticky: false,
+                horizontalEdge: 'top',
+                verticalEdge: 'right',
+                //zindex: 11500,
+            });
+        },        
+        
+        //fin de añadido
+        
+        
+        
         stopPageLoading: function() {
             $('.page-loading').remove();
         },

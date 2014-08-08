@@ -71,12 +71,12 @@ class BaseController extends AbstractActionController
         $controller = $request->getParam("controller");
         $action = $request->getParam("action");
 
-       $auth = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
+//        $auth = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
       
-        if (!$auth->hasIdentity() || \MisLibrerias\DatosSesion::getSiglaAplicacion() != "SAA") {
-        	//return $this->redirect()->toRoute('auth-doctrine/default', array('controller' => 'index', 'action' => 'login'));
-        	return $this->redirect()->toRoute('auth-doctrine/login');
-        }
+//         if (!$auth->hasIdentity() || \MisLibrerias\DatosSesion::getSiglaAplicacion() != "SAA") {
+//         	//return $this->redirect()->toRoute('auth-doctrine/default', array('controller' => 'index', 'action' => 'login'));
+//         	return $this->redirect()->toRoute('auth-doctrine/login');
+//         }
         
         
 //         if($controller != 'Application\Controller\Login'){

@@ -1,0 +1,30 @@
+<div class="note note-warning">
+	<p>
+        Administraci&oacute;n de la Tabla Param&eacute;trica "<?php echo $this->tabla->getNombre(); ?>"
+    </p>
+</div>
+	<!-- <a href="<?php //echo $this->url('administracion/default', array('controller' => 'index', 'action' => 'nuevo','id' => $this->id)); ?>"
+	data-target="#modal_nuevo" data-toggle="modal" class="btn blue"> -->
+	<a href="#" onclick="getModal('<?php echo $this->url('administracion/default', array('controller' => 'index', 'action' => 'nuevo','id' => $this->id)); ?>')" 
+	class="btn blue" title="NUEVO">
+	<i class="fa fa-file-o"></i> Nuevo</a>
+
+<?php echo $this->partial('administracion/index/partial_list',array('listado'=>$this->listado,'cabecera'=>$this->cabecera,'dato'=>$this->dato,'id' => $this->id)); ?>
+<?php echo $this->paginationControl($this->listado, 'Sliding', 'paginator-slide', array('route' => 'administracion/paginator','id' => $this->id)); ?>
+
+<div class="modal fade" id="modal_nuevo" role="basic" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content"></div>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+function getModal(href){
+	var url = href;
+    $('#modal_nuevo').modal('show');
+	$('.modal-content').load(url);
+	
+}
+
+</script>
