@@ -130,6 +130,8 @@ class BaseController extends AbstractActionController
 
             $this->em =  $anotherEntityManager;
 
+       // $this->em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
+            
 
         //}
         return $this->em;

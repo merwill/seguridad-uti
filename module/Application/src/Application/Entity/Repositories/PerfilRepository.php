@@ -12,4 +12,34 @@ use Doctrine\ORM\EntityRepository;
  */
 class PerfilRepository extends EntityRepository
 {
+	
+	public function saveData($formData) {
+		try {
+			$this->em->beginTransaction ();
+			if($formData['id']=='0'){
+				$data = new \Application\Entity\Perfil();
+				//$data->setFechaRegistro(new \DateTime());
+			}else{
+				$data = $this->em->find('Application\Entity\Perfil',$formData['id']);
+			}
+			$data->setNombre($formData['nombre']);
+			$data->setIdAplicacion($formData['id_aplicacion']);
+			$data->setEstado($formData['estado']);
+	
+			$this->em->persist($data);
+			$this->em->flush();
+			$this->em->commit ();
+			return $response = array (
+					"respuesta" => true,
+					"mensaje" => "SE REGISTRARON CORRECTAMENTE LOS DATOS."
+			);
+		} catch ( \Exception $e ) {
+			$this->em->rollback ();
+			$this->em->close ();
+			return $response = array (
+					"respuesta" => false,
+					"mensaje" => "ERROR AL REGISTRAR LOS DATOS"
+			);
+		}
+	}
 }

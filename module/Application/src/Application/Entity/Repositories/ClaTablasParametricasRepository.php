@@ -80,8 +80,8 @@ class ClaTablasParametricasRepository extends BaseEntityRepository
     }
     
     public function saveData($formData,$clase) {
-        if($clase == 'Application\Entity\ClaBanco'){
-            $SaveDataRepository = new ClaBancoRepository($this->em);
+        if($clase == 'Application\Entity\Perfil'){
+            $SaveDataRepository = new PerfilRepository($this->em);
         }
         else if($clase == 'Application\Entity\ClaSectorEntidad'){
             $SaveDataRepository = new ClaSectorEntidadRepository($this->em);
@@ -114,12 +114,13 @@ class ClaTablasParametricasRepository extends BaseEntityRepository
     }
     
     public function getForm($id,$clase) {
-        if($clase == 'Application\Entity\ClaBanco'){
-            $data = $this->em->find('Application\Entity\ClaBanco',$id);
+        if($clase == 'Application\Entity\Perfil'){
+            $data = $this->em->find('Application\Entity\Perfil',$id);
             return $response = array (
-                "descripcion" => $data->getDescripcion(),
-                "sigla" => $data->getSigla(),
-                "id" => $data->getId()
+                "id" => $data->getId(),
+                "nombre" => $data->getNombre(),
+                "id_aplicacion" => $data->getIdAplicacion(),
+                "estado" => $data->getEstado()
             );
         }
         else if($clase == 'Application\Entity\ClaSectorEntidad'){
