@@ -13,6 +13,24 @@
 
 return array(
     'static_salt' => 'aFGQ475SDsdfsaf2342', // was moved from module.config.php here to allow all modules to use it
+		'db' => array(
+				'driver' => 'Pdo',
+				'dsn' => 'mysql:dbname=sn;host=192.168.0.110',
+				'driver_options' => array(
+						PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
+				),
+		),
+		'service_manager' => array(
+				'factories' => array(
+						'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
+				),
+		),
+		'view_manager' => array(
+				'strategies' => array(
+						'ViewJsonStrategy',
+				),
+		),
+		
 //     'doctrine' => array(
 //         'connection' => array(
 //             'orm_default' => array(

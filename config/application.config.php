@@ -2,24 +2,26 @@
 return array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
+        //
+        'Common',
+        'Acceso',
+        'Application',
+        'AuthDoctrine',
+        'Administracion',
+        'Usuarios',
         'MisLibrerias',
         'DoctrineModule',
         'DoctrineORMModule',
-    	'AuthDoctrine',
-    	'Application',
-        'Usuarios',
-        'Administracion',
-    		
-    		
-    		
+
+
         //'Aplicaciones',
         //'Entidades',
         //'EstructuraOrganizacional',
         //'Formulacion',
         //'Parametros',
         //'Perfiles',
-    		
-       // 'CsnNavigation',
+
+        // 'CsnNavigation',
 
 
     ),
@@ -77,7 +79,7 @@ return array(
     //     ),
     // )
 
-   // Initial configuration with which to seed the ServiceManager.
-   // Should be compatible with Zend\ServiceManager\Config.
-   // 'service_manager' => array(),
+    // Initial configuration with which to seed the ServiceManager.
+    // Should be compatible with Zend\ServiceManager\Config.
+    // 'service_manager' => array(),
 );
