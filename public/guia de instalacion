@@ -1,0 +1,32 @@
+Instrucciones de instalación
+Requisitos: 2.2 + Apache, Mysql 5.4+, PHP 5.4+
+Copiar / Sube la carpeta y los archivos a su servidor web o FTP usando cPanel
+Si va a instalar en la subcarpeta, por favor asegúrese de que no hay espacio en los nombres de carpetas
+Crear base de datos MySQL, el usuario de base de datos y otorgar todos los permisos de usuario para esta base de datos.
+Abra la http://yourdomain.com/pathtoupload/install/index.php
+Paso 1: Pre-instalación de sistema de lista de control - Si hay algún problema con la lista de verificación, tendrá que arreglar primero en proceder al siguiente paso.
+Paso 2: incluye Envato nombre de usuario y código de compra para validar la compra.
+Paso 3: Proporcionar el host de base de datos, la base de datos de usuario, contraseña y base de datos de base de datos de nombre para proceder al siguiente paso. Por favor asegúrese de que usted no tiene signo $ en su contraseña.
+Paso 4: Sitio Config:. Rellene todos los campos que SIM URL base y seleccione su zona horaria Debe comprobar la URL del sitio como instalador podría adivinar mal
+URL base para la carpeta public_html o www / htdocs será http://yourdomain.com/ o http: // localhost /
+URL base para subdominio será http://subdomain.yourdomain.com/
+URL base para la subcarpeta será http://yourdomain.com/subfolder/ o http: // localhost / subcarpeta /
+al final te pediras  un usuario y un pass::
+user:electrolito
+codigo de compra: 2d488940-2451-41db-a906-369f9b77b194
+URL base no debe tener espacio y debe terminar con una barra diagonal
+Si todo va suave, Usted será redirigir a la página final con datos de acceso.
+Retire la carpeta de instalación y ya está. En caso de que tenga cualquier problema después de esto, por favor consulte laPreguntas frecuentes sección de abajo.
+Inicia sesión usando nombre de usuario y contraseña por defecto y añadir nuevo usuario administrador antes de editar / borrar el usuario por defecto.
+Simple encargado de la factura está lista para usar.
+por ultimo entra a la carpeta app/config/database.php  y configura los valores database,pass,user,hostport  con los valores de tu base de datos creada
+
+
+si se perdio en los pasos de instalacion   aqui un video guia:
+
+     https://www.youtube.com/watch?v=jKIfcVoPh18
+
+
+
+user:kaltemboard@gmail.com
+pass: 12345678
