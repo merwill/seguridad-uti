@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Guía del Curso de Administración de Servidores Linux</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+    <link rel="manifest" href="assets/manifest.json">
+    <link rel="mask-icon" href="assets/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="theme-color" content="#ffffff">
+    <link href="https://fonts.googleapis.com/css?family=Alegreya+Sans|Quicksand" rel="stylesheet">
+    <link rel="stylesheet" href="assets/index.css">
+</head>
+<body>
+    <div class="jumbotron">
+        <div class="container">
+            <h1>Guía del Curso de Administración de Servidores Linux</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <section>
+            <h2>Introducción a Linux</h2>
+            <p>A continuación se listarán y detallarán los comandos más esenciales a la hora de administrar servidores Linux.</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong><kbd>ifconfig</kbd></strong> Permite ver las network interfaces</li>
+                <li><strong><kbd>ifdown [network interface]</kbd></strong> Desactiva dicha interface</li>
+                <li><strong><kbd>ifup [network interface]</kbd></strong> Activa dicha interface</li>
+                <p>Los binarios se encuentran en: <strong>/sbin/if...</strong></p>
+                <li><strong><kbd>ping [ip address]</kbd></strong> Permite realizar ping a dicha IP</li>
+                <li><strong><kbd>ssh [ip address] o ssh [username]@[ip address]</kbd></strong> Permite conectarse por medio de SSH a un servidor (ubicado en dicha IP)</li>
+                <li><strong><kbd>ssh-keygen -t rsa -b 4096 -C [your_email@example.com]</kbd></strong> Permite generar una llave ssh tipo rsa</li>
+                <li><strong><kbd>ssh-copy-id -i [ssh-key address].pub [username]@[ip address]</kbd></strong> Envia una copia de la llave ssh "pública" a un servidor (ubicado en dicha IP)</li>
+                <p>En el servidor se crea una carpeta en el home <strong>(.ssh/authorized_keys)</strong>; donde almacena la llave ssh "pública". </p>
+                <li><strong><kbd>sudo vim /etc/ssh/sshd_config</kbd></strong> En este archivo de configuración se debe editar la opción para que la única forma de conectarse al servidor sea por medio de ssh y no por medio de username y password.</li>
+                <p>La opción a editar es: <strong>PasswordAuthentication [no]</strong>, colocar no; para evitar la autenticación por medio de username y password</p>
+                <li><strong><kbd>sudo /etc/init.d/ssh restart</kbd></strong> Reinicia el servicio ssh; y aplica los cambios</li>
+            </ul>
+
+            <p>A continuación se muestran los puertos más básicos (que debemos conocer) en <strong>Linux</strong>.</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong>FTP (File Transfer Protocol):</strong> Puerto 21</li>
+                <li><strong>SSH (Secure Shell):</strong> Puerto 22</li>
+                <li><strong>HTTP (HyperText Transfer Protocol):</strong> Puerto 80</li>
+                <li><strong>SFTP (Secure File Transfer Protocol):</strong> <strike>Puerto 115</strike> SFTP usualmente usa el puerto 22 ya que internamente usa el comando "scp" que es para copiar archivos (descargar o subir) a través de SSH por lo que forzosamente SFTP tiene que usar el mismo puerto que SSH. Correción hecha por <a href="https://twitter.com/NachooGoomez" target="_blank">Ignacio Castillejo</a> :)</li>
+                <li><strong>HTTPS/SSL (Secure HyperText Transfer Protocol/Secure Sockets Layer):</strong> Puerto 443</li>
+            </ul>
+
+            <p>
+                Las llaves <strong>SSH</strong> son muy importante para un <strong>SysAdmin</strong>, ya que permiten conectarnos a un servidor y así poder ejecutar comandos de forma remota, de manera muy segura.
+                Estas llaves se recomienda que sean almacenadas en el <strong>home</strong> en una carpeta llamada <strong>.ssh/</strong> y es importante asignarle un nombre al momento de generar una nueva para no sobrescribir una llave con otra.
+            </p>
+
+            <p>Una forma de evitar estar escribiendo <strong>[username]@[ip address]</strong> para acceder a un servidor es creando una configuración que nos haga automático el login y con un alias corto, es la siguiente:</p>
+            <ul>
+                <li><strong><kbd>vim .ssh/config</kbd></strong> En este archivo se agregaran las instrucciones a seguir.</li>
+            </ul>
+
+            <p>Dentro del archivo de configuración es importante que se configure primordialmente así:</p>
+<pre>
+    <strong>Host</strong> [alias]
+        <strong>HostName</strong> [ip address]
+        <strong>Port</strong> 22
+        <strong>User</strong> [username]
+        <strong>IdentityFile</strong> ~/.ssh/[ssh-keyname].pub
+</pre>
+
+            <p><strong>VIM es un fork de VI</strong> y viene de manera predeterminada en muchos servidores, en caso de necesitar instalarlo basta con ejecutar (por ejemplo, en Debian/Ubuntu): <strong>apt-get install vim</strong>.</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong>Modo comandos <strong><kbd>ESC</kbd></strong>:</strong> Permite ejecutar comandos sin modificar el archivo</li>
+                <p><strong><kbd>ESC</kbd></strong> Entra al modo comando sí se está en modo inserción</p>
+                <li><strong>Modo inserción <strong><kbd>i</kbd></strong>:</strong> Permite insertar modificaciones al archivo</li>
+                <p><strong><kbd>i</kbd></strong> Entra al modo inserción sí se está en modo comando</p>
+                <li><strong>Modo visual <strong><kbd>v</kbd></strong>:</strong> Permite visualizar el archivo</li>
+                <p><strong><kbd>v</kbd></strong> Entra al modo visual sí se está en modo comando</p>
+                <li><strong><kbd>u</kbd></strong> Revierte los cambios de un archivo, es el <strong><kbd>CNTRL + Z</kbd></strong> de VIM</li>
+                <li><strong>Guardar el archivo:</strong> Se realiza con el comando <strong><kbd>w</kbd></strong></li>
+                <li><strong>Salir sin guardar:</strong> Se realiza con el comando <strong><kbd>q!</kbd></strong></li>
+                <li><strong>Guardar y salir:</strong> Se realiza con el comando <strong><kbd>wq</kbd></strong></li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Instalación y configuración de programas</h2>
+            <p>En la dirección <strong>/etc/apt/</strong> existe un archivo llamado <strong>source.list</strong> en el se guardan las fuentes de los repositorios que el sistema consultará al momento de instalar un paquete.</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong><kbd>apt-get</kbd></strong> Este programa "es un manejador de paquetes" y nos permite instalar, desintalar y/o actualizar paquete</li>
+                <p>Con <strong><kbd>install</kbd></strong> seguido del nombre de un paquete podemos instalar dicho paquete; para desintalar basta con usar <strong><kbd>remove</kbd></strong> seguido del paquete que queramos desintalar</p>
+                <li><strong><kbd>dpkg -i [url-package].deb</kbd></strong> Permite instalar paquete, por ejemplo los .deb</li>
+                <li><strong><kbd>dpgk -P [name-package]</kbd></strong> Elimina completamente el paquete incluyendo sus datos, absolutamente todo.</li>
+                <p>Desintalar los programas con <strong><kbd>dpkg -P</kbd></strong> no es una forma muy correcta de hacerlo ya este comando solo elimina el paquete que se le ordeno más no los programas que dependen de el, en cambio con <strong><kbd>apt-get remove</kbd></strong> se desintalan los paquetes de forma inteligente con todo y los programas dependientes a el.</p>
+                <li><strong><kbd>aptitude</kbd></strong> Este programa permite buscar, administrar e instalar paquetes en <strong>Linux</strong> de una forma más avanzada que con <strong><kbd>apt-get install</kbd></strong></li>
+            </ul>
+
+            <p>Al momento de hablar de <strong>"empaquetar"</strong> y <strong>"comprimir"</strong> se debe entender a primera instancia que son dos cosas totalmente distintas.</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong>Empaquetar:</strong> Tomar varios archivos y hacer de ellos uno solo.</li>
+<pre>
+    <strong>tar</strong> cvf [directorio de salida] [carpeta a empaquetar]
+</pre>
+                <li><strong>Comprimir:</strong> Tomar un archivo y reducir su tamaño por medio de diferentes algoritmos (si quieres saber como funciona la compresión de un archivo dale click <a href="https://platzi.com/clases/ingenieria/concepto/archivos-y-estructuras-de-datos/como-funciona-zip-arboles-binarios/material/" target="_blank">aquí</a>) de esta forma se genera finalmente un archivo con un menor tamaño.</li>
+<pre>
+    <strong>gzip</strong> -9r [archivo a comprimir]
+</pre>
+                <li>Para <strong>empaquetar</strong> y <strong>comprimir</strong> al mismo tiempo: Es importante conocer que la <strong>c</strong> requiere crear el archivo, la <strong>v</strong> solicita la información detallada y <strong>f</strong> toma un argumento que establece el nombre del archivo a operar. En esta caso la <strong>z</strong> se utiliza para comprimir.</li>
+<pre>
+    <strong>tar c</strong>vf<strong>z</strong> archivo.tar.gz [carpeta para comprimir]
+</pre>
+                <li>Para <strong>desempaquetar</strong> y <strong>descomprimir</strong> al mismo tiempo: En este caso el parámetros que cambia (la <strong>c</strong> por la <strong>x</strong>) significa; "extraer un archivo".</li>
+<pre>
+    <strong>tar x</strong>vf<strong>z</strong> archivo.tar.gz
+</pre>
+            </ul>
+
+            <p>En cada distribución de <strong>Linux</strong> se encuentra un directorio donde esta toda la documentación de cada paquete instalado. En Ubuntu se encuentra en <strong>/usr/share/doc</strong>.</p>
+        </section>
+
+        <section>
+            <h2>Administración de particiones y arranque</h2>
+            <p>La arquitectura de <strong>Linux</strong> es una de las cosas más importante que debemos de entender de este sistema operativo. La arquitectura de archivos de <strong>Linux</strong> parte de su <strong>directorio raíz (/)</strong></p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong>/</strong>: Raíz del sistema operativo.</li>
+                <li><strong>/home</strong>: Directorio donde se almacenan los archivos de cada usuario.</li>
+                <li><strong>/lib</strong>: Directorio donde se almacenan las librerías del sistema. Dependiendo de la arquitectura del sistema se puede encontrar <strong>lib32</strong> y <strong>lib64</strong>, estas hacen referencia a <strong>32 bits</strong> y <strong>64 bits</strong>.</li>
+                <li><strong>/mnt</strong>: Directorio donde se montan los dispositivos que se insertan al computador, por ejemplo: memorias USB. También se usa <strong>/media</strong> con el mismo fin.</li>
+                <li><strong>/opt</strong>: Directorio donde se almacenan los programas instalados de terceros.</li>
+                <li><strong>/root</strong>: Directorio <strong>exclusivo</strong> donde se almacenan los archivos del <strong>super-usuario</strong> (o también conocido como <strong>root</strong> en los sistemas <strong>Linux</strong>)</li>
+                <li><strong>/bin</strong>: Directorio donde se encuentran los binarios de los usuarios.</li>
+                <li><strong>/sbin</strong>: Directorio donde se encuentran los binarios del administrador.</li>
+                <p>Otro directorio donde se encuentran más binarios es <strong>/usr/bin/</strong>.</p>
+                <li><strong>/tmp</strong>: Directorio donde se encuentran los archivos temporales del sistema.</li>
+                <li><strong>/usr</strong>: Directorio donde se encuentran todos los programas instalados por defectos.</li>
+                <li><strong>/var</strong>: Directorio donde se guardan todas las configuraciones de <strong>backups</strong>, <strong>cache de descarga</strong> del sistema, el <strong>servidor web</strong>, todos los <strong>logs</strong>, entre otras cosas.</li>
+                <li><strong>/etc</strong>: Directorio donde se almacenan los archivos de configuración del sistema.</li>
+                <li><strong>/boot</strong>: Directorio donde se almacenen todos los archivos necesarios para el arranque del sistema.</li>
+            </ul>
+            
+            <p>Todos los discos duros tienen particiones. Las particiones permiten dividir un disco asignándole un espacio del disco a cada una de ellas.</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong><kbd>fdisk -l</kbd></strong> Muestra los discos y las particiones que existen. A continuación se muestra que existen 2 discos duros (la práctica la hice en VirtualBox) y su respectivas particiones.</li>
+<pre>
+    <strong>Disk /dev/sda: 10 GiB, 10737418240 bytes, 20971520 sectors</strong>
+    Units: sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 512 bytes
+    I/O size (minimum/optimal): 512 bytes / 512 bytes
+    Disklabel type: dos
+    Disk identifier: 0x83cdfcea
+
+    <strong>Device     Boot    Start      End  Sectors  Size Id Type</strong>
+    /dev/sda1  *        2048 19922943 19920896  9.5G 83 Linux
+    /dev/sda2       19924990 20969471  1044482  510M  5 Extended
+    /dev/sda5       19924992 20969471  1044480  510M 82 Linux swap / Solar
+
+
+    <strong>Disk /dev/sdb: 4 GiB, 4294967296 bytes, 8388608 sectors</strong>
+    Units: sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 512 bytes
+    I/O size (minimum/optimal): 512 bytes / 512 bytes
+</pre>
+                <li><strong><kbd>fdisk /dev/[disco duro]</kbd></strong> Selecciona el disco duro en el cual se harán las particiones (en este caso en de 4GB).</li>
+                <p><strong><kbd>m</kbd></strong> Con esta opción se listan los diferentes comandos del programa.</p>
+                <p><strong><kbd>p</kbd></strong> Con esta opción se muestra la forma en el que se encuentra particionado el disco duro. En este caso no tiene nada.</p>
+                <p><strong><kbd>n</kbd></strong> Esta opción permite crear una nueva partición en el disco. Al intentar crear una partición se le preguntará si será <strong><kbd>p</kbd> primary</strong> o <strong><kbd>e</kbd> extended</strong>. Para finalizar se le coloca el tamaño de la partición, por ejemplo, <strong><kbd>+1G</kbd></strong> en este caso.</p>
+                <p><strong>Nota:</strong> Algo muy importante a tener en cuenta es que solo se pueden crear 4 particiones primarias y muchas lógicas (las particiones lógicas sirven como contenedor para más particiones).</p>
+                <p><strong><kbd>q</kbd></strong> Esta opción permite salir sin guardar los cambios.</p>
+                <p><strong><kbd>l</kbd></strong> Lista todos los tipos de particiones que existen. Para establecer alguna se debe usar su número de identificación.</p>
+                <p><strong><kbd>t</kbd></strong> Esta opción permite cambiar el tipo de.</p>
+                <p><strong><kbd>w</kbd></strong> Con esta opción se guardan los cambios y sale de <strong>fdisk</strong>.</p>
+                <p><strong><kbd>w</kbd></strong> Esta opción permite eliminar particiones.</p>
+            </ul>
+
+            <p>Existen muchos tipos de sistemas de archivos, cada uno tiene características que lo hacen útil para diferentes dispositivos.</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong>Formato con FAT32:</strong> Ejecutando el comando <strong><kbd>mkfs.vfat /dev/[nombre de la partición]</kbd></strong> se le da un formato FAT32 a dicha partición.</li>
+                <li><strong>Formato con EXT3:</strong> Ejecutando el comando <strong><kbd>mkfs.ext3 /dev/[nombre de la partición]</kbd></strong> se le da un formato EXT3 a dicha partición.</li>
+                <li><strong>Formato con EXT4:</strong> Ejecutando el comando <strong><kbd>mkfs.ext4 /dev/[nombre de la partición]</kbd></strong> se le da un formato EXT4 a dicha partición.</li>
+                <li><strong>Formato con XFS:</strong> Ejecutando el comando <strong><kbd>mkfs.xfs /dev/[nombre de la partición]</kbd></strong> se le da un formato XFS a dicha partición.</li>
+            </ul>
+
+            <p>Para <strong>montar una partición</strong> se debe crear un directorio por cada partición que se quiera montar.</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong><kbd>mkdir [nombre de la carpeta]</kbd></strong> Crea un directorio</li>
+                <li><strong><kbd>mount [nombre de la partición a montar] [nombre de la carpeta donde se montará la partición]</kbd></strong> Monta una partición.</li>
+                <li><strong><kbd>umount [nombre de la carpeta donde se encuentra montada la partición]</kbd></strong> Desmonta una partición.</li>
+                <li><strong><kbd>df -h</kbd></strong> Muestra los directorios de como se tiene montado el sistema.</li>
+            </ul>
+            <p>Para montar una partición de forma automática solo hay que editar un archivo en <strong>/etc/fstab</strong> y añadimos:</p>
+            <pre>/dev/[nombre de la partición]    /[carpeta donde se montará (punto de montaje)]    ext4    defaults,discard    0 0</pre>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong>/dev/[nombre de la partición]:</strong> Se describe la partición a montar (con su número).</li>
+                <li><strong>/[carpeta donde se montará]:</strong> Se describe el punto de montaje (es importante que lo creemos antes).</li>
+                <li><strong>ext4:</strong> Se describe el formato de la partición con el cual se montará.</li>
+                <li><strong>defaults,discard:</strong> Se describe si se cargará o no al inicio del sistema.</li>
+                <p>Para terminar solo falta montarla <strong>/[carpeta que se usó para montar (punto de montaje)].</strong></p>
+            </ul>
+            <p>El área de intercambio o partición swap, es muy útil para máquinas que tienen muy poca memoria RAM.</p>
+            <ul>
+                <li><strong><kbd>free</kbd></strong> Este programa muestra el uso de la memoria RAM y la swap.</li>
+                <li><strong><kbd>htop</kbd></strong> Este programa también muestra el uso del CPU, memoria RAM, la swap, entre otras cosas. Es programa es más completo y se debe instalar.</li>
+            </ul>
+
+            <p><strong>Swap</strong> es un espacio de intercambio que utiliza el disco duro, en lugar de la RAM para almacenar datos temporalmente.</p>
+            <ul>
+                <li>Con el comando <strong><kbd>mkswap [nombre de la partición swap]</kbd></strong> formateamos la partición de tipo <strong>swap</strong>.</li>
+                <li>Con el comando <strong><kbd>swapon [nombre de la partición swap]</kbd></strong> activo la partición <strong>swap</strong>.</li>
+                <li>Con el comando <strong><kbd>swapoff [nombre de la partición swap]</kbd></strong> desactivo la partición <strong>swap</strong>.</li>
+            </ul>
+
+            <p>El <strong>GRUB</strong> es un gestor de arranque que permite cargar el <strong>kernel de linux</strong> y el sistema.</p>
+            <ul>    
+                <li>Los archivos del <strong>GRUB</strong> se encuentran en el directorio: <strong>/etc/grub.d</strong></li>
+                <li>En <strong>/boot/grub/grub.cfg</strong> se encuentran el archivo de configuración. No modificar este archivo.</li>
+                <li>Con el comando <strong><kbd>grub install [nombre del disco duro]</kbd></strong> se inicia la instalación del <strong>GRUB</strong>. Si en algún momento ocurre un error al iniciar el sistema, comúnmente con este comando se soluciona.</li>
+            </ul>
+
+            <h4>Administrar discos duros con LVM <small>(Logical Volume Management)</small></h4>
+            <p><strong>LVM</strong> nos permite realizar una configuración de discos duros que nos permita administrar el espacio de almacenamiento del servidor.</p>
+            <ul>
+                <li><strong><kbd>apt-get install lvm2</kbd></strong> Instala la configuración de LVM.</li>
+            </ul>
+            <p>Ante todo se debe crear la partición y darle el formato <strong>Linux LVM (8e)</strong> con <strong><kbd>fdisk</kbd></strong>.</p>
+            
+            <h5>Volúmenes físicos (Physical Volumes):</h5>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong><kbd>pvcreate /dev/[nombre de la partición]</kbd></strong> Este comando agrega la partición a los volúmenes físicos del LVM.</li>
+                <li><strong><kbd>pvremove /dev/[nombre de la partición]</kbd></strong> Este comando elimina la partición a los volúmenes físicos del LVM.</li>
+                <li><strong><kbd>pvscan</kbd></strong> Este comando lista las particiones que están agregadas en los volúmenes físicos del LVM y el tamaño total de la suma de todas las particiones.</li>
+                <li><strong><kbd>pvs</kbd></strong> Este comando lista los volúmenes lógicos.</li>
+            </ul>
+            
+            <h5>Grupo de volúmenes (Volume Groups): Agrupación de volúmenes físicos.</h5>
+            <!-- Lista desordenada -->
+            <ul>    
+                <li><strong><kbd>vgcreate [nombre del grupo] /dev/[nombre de la partición]</kbd></strong> Este comando permite agregar la partición a un grupo.</li>
+                <li><strong><kbd>vgextend [nombre del grupo] /dev/[nombre de la partición]</kbd></strong> Este comando permite agregar más particiones a un grupo existente.</li>
+                <li><strong><kbd>vgreduce [nombre del grupo] /dev/[nombre de la partición]</kbd></strong> Este comando permite elimina la partición de un grupo.</li>
+                <li><strong><kbd>vgdisplay</kbd></strong> Este comando lista y detalla los grupos existentes.</li>
+                <li><strong><kbd>vgs</kbd></strong> Este comando lista los grupos existentes.</li>
+            </ul>
+            
+            <h5>Volúmenes lógicos (Logical Volumes):</h5>
+            <!-- Lista desordenada -->
+            <ul>    
+                <li><strong><kbd>lvcreate -n [nombre de la partición lógica] -L [tamaño]G [nombre del grupo]</kbd></strong> Este comando crea una partición lógica tomando un grupo existente como su espacio.</li>
+                <li><strong><kbd>lvextend -L+[tamaño]G /dev/[nombre del grupo]/[nombre del volumen lógico]</kbd></strong> Extiende el tamaño del volumen lógico, según el espacio que tenga disponible el grupo que se usó para crear dicho volumen lógico.</li>
+                <li><strong><kbd>lvs</kbd></strong> Este comando lista las particiones que se han hecho de los grupos existentes (partición lógica).</li>
+            </ul>
+            <p>A este tipo de particiones también se les puede dar su respectivo formato con el comando <strong><kbd>mkfs.[formato] /dev/[nombre del grupo]/[nombre del volumen lógico]</kbd></strong></p>
+        
+            <p>Los <strong>SysAdmin</strong> comúnmente deben apagar, reiniciar servidores de forma remota pero se debe tener en cuenta que:</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li>Verificar en cual servidor se esta conectado.</li>
+                <li>Es diferente apagar y reiniciar.</li>
+                <li><strong>Linux no pregunta confirmación.</strong></li>
+            </ul>
+
+            <p>Los comandos para realizar estas tareas son:</p>
+            <ul>
+                <li><strong><kbd>shutdown -r now</kbd></strong> Este comando reiniciar la maquina.</li>
+                <li><strong><kbd>shutdown -h now</kbd></strong> Este comando <strong>apaga la maquina</strong>. La forma de encenderla nuevamente debe ser de manera física.</li>
+            </ul>
+            <p>Con el comando <strong><kbd>systemctl --help</kbd></strong> podemos obtener información de comandos para operar la maquina.</p>
+        </section>
+
+        <section>
+            <h2>El sistema y que hay que hacer</h2>
+
+            <p>Las variables de entorno permiten configurar diferentes ambientes, sea de desarrollo o de producción, estas también guardan llaves de seguridad.</p>
+            <ul>
+                <li>¿Como configurar una variable de entorno?</li>
+<pre>
+    <strong>PLATZI</strong>="https://platzi.com"
+</pre>
+                <li>¿Como imprimir una variable de entorno?</li>
+<pre>
+    <strong>$</strong>PLATZI
+</pre>
+            </ul>
+
+            <p>Los archivos <strong>.bashrc</strong> y <strong>.profile</strong> guardan configuraciones de la sesión como "alias" (variables de entorno).</p>
+            <p>Para declarar variables de entorno se puede hacer en los archivos <strong>/etc/profile</strong> y/o <strong>/etc/bash.bashrc</strong>, la diferencia entre ellos es que el primero solo afecta al usuario donde se creo la variable mientras que este último afecta a todos los usuarios. La lógica para agregar variables de entorno es la misma que se usar para declararlas a través de la terminal, sin embargo para que la variable se mantenga presente en un inicio de sesión distinto se debe anteponer la palabra <strong>export</strong>.</p>
+            
+            <p>Una tarea muy común de un administrador de sistemas es leer archivos, leer logs, unos comandos muy importantes que se deben conocer son los siguientes:</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong><kbd>lees [nombre del archivo]</kbd></strong> Permite leer un archivo. Con <strong><kbd>G</kbd></strong> se puede ir al final del archivo.</li>
+                <li><strong><kbd>more [nombre del archivo]</kbd></strong> Permite leer un archivo de manera secuencial.</li>
+                <li><strong><kbd>cat [nombre del archivo]</kbd></strong> Imprime el contenido completo de un archivo.</li>
+                <li><strong><kbd>head [nombre del archivo]</kbd></strong> Imprime el principio de un archivo.</li>
+                <li><strong><kbd>tail [nombre del archivo]</kbd></strong> Imprime el final de un archivo.</li>
+                <li><strong><kbd>grep -r "[filtrar información]" *</kbd></strong> Permite buscar en un archivo una cadena de texto. La bandera <strong>-r</strong> indica que la búsqueda se realizará de manera recursiva.</li>
+                <li><strong><kbd>wc [archivo]</kbd></strong> Cuenta las líneas de un archivo.</li>
+            </ul>
+
+            <p>Algo muy importante de conocer es la forma como se encadenan procesos, estas tareas se pueden realizar con los comandos:</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong><kbd>grep -r "[filtrar información]" * | wc</kbd></strong> El resultado de <strong><kbd>grep</kbd></strong> por medio de <strong><kbd>|</kbd></strong> se le pasa a <strong><kbd>wc</kbd></strong> y así se encadenan procesos. La combinación de estos dos comandos da como resultado el número de líneas que se encontró la información filtrada.</li>
+            </ul>
+            <p>Otra cosa sumamente importante es entender como enviar la salida de un comando a un archivo, para eso usamos:</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong><kbd>grep -r "[filtrar información]" * > /[archivo de salida]</kbd></strong> Imprime el resultado del primer comando en un archivo final. Todo se resumen en el uso de <strong><kbd>></kbd></strong></li>
+                <li><strong><kbd>grep -r "[filtrar información]" * >> /[archivo de salida]</kbd></strong> Le suma el resultado del primer comando en un archivo final. Todo se resumen en el uso de <strong><kbd>>></kbd></strong></li>
+            </ul>
+
+            <p>En <strong>Linux</strong> todo es un proceso. Los procesos permiten al <strong>OS</strong> trabajar. Los procesos en <strong>Linux</strong> están encapsulados, es decir, el usuario que lanzó el proceso es quien lo debe quitar.</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong><kbd>ps aux</kbd></strong> Muestra todos los procesos que se encuentra corriendo el sistema.</li>
+                <li>Todo proceso en <strong>Linux</strong> tiene un identificador (ID). Ese ID es único.</li>
+                <li><strong><kbd>kill</kbd></strong> Permite matar procesos. Con la bandera <strong>-9</strong> forzamos la muerte de un proceso, sin importar lo que diga.</li>
+                <li>Los procesos en <strong>Linux</strong> tienen una prioridad (NI). Un proceso tiene un valor de prioridad entre -20 y 19. El valor <strong>-20 es el más importante</strong> y así va aumentando hasta llegar al 19.</li>
+            </ul>
+
+            <p>En <strong>Linux</strong> existe algo llamado "enlaces", estos se dividen en los simbólicos y duros.</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong>Enlace simbólicos:</strong> Se crean con el comando <strong><kbd>ln -s /[ruta del directorio padre] /[ruta del directorio hijo]</kbd></strong> Referencia a la ubicación del archivo original.</li>
+                <li><strong>Enlace duros:</strong>Se crean con el comando <strong><kbd>ln /[ruta del directorio padre] /[ruta del directorio hijo]</kbd></strong> Este tipo de enlace se caracteriza por que un archivo enlazado al original tiene un nombre diferente.</li>
+                <blockquote>
+                    <p>Se entiende por padre al archivo principal y por hijo al enlace que se crea.</p>
+                </blockquote>
+                <li><strong><kbd>touch [nombre del archivo]</kbd></strong> Permite crear archivos vacíos.</li>
+                <li><strong><kbd>tree</kbd></strong> Este programa de terceros muestra el árbol de directorio.</li>
+            </ul>
+            
+            <h4>Manejo de usuarios y grupos</h4>
+            <p><strong>Linux</strong> es un sistema multiusuarios, cada usuario puede correr con diferentes configuraciones, permisos, entre otras cosas.</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong><kbd>adduser [nombre del usuario]</kbd></strong> Crea un nuevo usuario. Todo usuario tiene un ID único.</li>
+                <li><strong><kbd>deluser [nombre del usuario]</kbd></strong> Elimina un usuario.</li>
+                <li><strong><kbd>passwd [nombre del usuario]</kbd></strong> Cambia la contraseña del usuario.</li>
+                <li><strong><kbd>su - [nombre del usuario]</kbd></strong> Cambia a un usuario puntual.</li>
+                <li><strong><kbd>groups</kbd></strong> Muestra los grupos a los cuales pertenece el usuario donde se realizó la consulta.</li>
+                <li><strong><kbd>addgroup [usuario] [grupo]</kbd></strong> Agrega a un usuario a un grupo.</li>
+                <li><strong><kbd>delgroup [usuario] [grupo]</kbd></strong> Expulsa a un usuario a un grupo.</li>
+                <li><strong><kbd>whoami</kbd></strong> Muestra el nombre del usuario desde donde se realizó la consulta.</li>
+                <li>En <strong>/etc/passwd</strong> están todos los usuarios del sistema.</li>
+                <li>En <strong>/etc/group</strong> están todos los grupos del sistema.</li>
+                <li>En <strong>/etc/shadow</strong> están todas las contraseñas de los usuarios.</li>
+            </ul>
+
+            <p>Si se añada un usuario a un grupo es necesario salir de la sesión e iniciar nuevamente para que tome los cambios realizados.</p>
+            
+            <h2>Administración</h2>
+            <p>El <strong>kernel</strong> es la pieza fundamental del sistema operativo. El <strong>kernel</strong> es el que interactúa entre el hardware y cualquier programa que se este ejecutando en ese momento.</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong>/etc/security/limits.conf:</strong> Contiene las límites generales de todo lo que existe en <strong>Linux</strong>.</li>
+            </ul>
+
+            <h4>Permisos de archivos</h4>
+            <p>Los permisos en <strong>Linux</strong> permiten controlar la seguridad del sistema. Algunos comandos importantes son:</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong><kbd>ls -l</kbd></strong> Lista los archivos y directorios con sus propiedades y sus permisos.</li>
+                <li><strong><kbd>chmod [bloque][+ o -][permiso] [archivo o directorio]</kbd></strong> Permite cambiar los permisos. El parámetro [bloque] define si es el usuario, el grupo o los otros usuarios. Los parámetros [+ o -] para agregar o eliminar. El parámetro [permiso] si es de lectura (read), escritura (write) o ejecución (execution).</li>
+                <li><strong><kbd>chmod 755 [archivo o directorio]</kbd></strong> Permite cambiar los permisos. Lectura (read) tiene un valor de 4, escritura (write) un valor de 2 y ejecución (execution) un valor de 1, la sumatoria entre todos esos da 7, es lo mismo que decir: <strong><kbd>chmod o+rwx [archivo]</kbd></strong>.</li>
+                <li><strong><kbd>chmod u=rwx,g=,o= [archivo o directorio]</kbd></strong> Permite cambiar los permisos. Usuario tiene permiso de lectura, escritura y ejecución, el grupo no tiene ningún permiso y los otros usuarios tampoco.</li>
+            </ul>
+<pre>
+    <strong>4</strong> Lectura
+    <strong>2</strong> Escritura
+    <strong>1</strong> Ejecución
+</pre>
+<pre>
+    <strong>➜  administracion-linux</strong> git:(master) ✗ ls -l
+    total 44
+    -rwxrwxrwx 1 root root     0 Oct  6 22:50 <strong>archivo</strong>
+    drwxrwxrwx 1 root root  4096 Oct  4 15:06 <strong>assets</strong>
+    -rwxrwxrwx 1 root root 36236 Oct  6 22:50 <strong>index.html</strong>
+    -rwxrwxrwx 1 root root   735 Oct  4 15:06 <strong>README.md</strong>
+</pre>
+
+            <p>El área de permisos esta definida como <strong>-rwxrwxrwx</strong>. La primera letra o carácter define si es un archivo o directorio, las siguientes 3 letras representan los permisos del usuario, las otras 3 representan los permisos del grupo y las ultimas 3 representan los permisos de todos los demás usuarios.</p>
+            <!-- Lista desordenada -->
+            <ul>
+                <li><strong>-</strong> Describe a un archivo.</li>
+                <li><strong>d</strong> Describe a un directorio.</li>
+                <li><strong>r</strong> Describe que un archivo o directorio se le esta permitido la lectura.</li>
+                <li><strong>w</strong> Describe que un archivo o directorio se le esta permitido la escritura.</li>
+                <li><strong>x</strong> Describe que un archivo o directorio se le esta permitido la lectura.</li>
+            </ul>
+
+            <p>Los <strong>DNS</strong> (Domain Name System) permiten mapear un nombre a una dirección IP. Los distintos tipos de <strong>DNS</strong> son:</p>
+            <ul>
+                <li><strong>/etc/host</strong> Este archivo guarda la lista de IPs y nombres asignados en la máquina.</li>
+                <li><strong>A</strong> - IPv4.</li>
+                <li><strong>CNAME</strong> - nombre.</li>
+                <li><strong>MX</strong> - correo.</li>
+                <li><strong>AAAA</strong> - dirección IPv6.</li>
+                <li><strong>TXT</strong> - texto.</li>
+                <li><strong>PTR</strong> - DNS reverso.</li>
+                <li><strong><kbd>dig @ [DNS]</kbd></strong> Permite hacer consultas al <strong>DNS</strong> del dominio.</li>
+            </ul>
+
+            <p><strong>NTP</strong> es un servicio que permite sincronizar la hora. El comando para instalarlo es: <strong><kbd>apt-get install ntp</kbd></strong></p>
+        </section>
+    </div>
+
+    <!-- Pie de página -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h3 class="text-center">Acerca del autor</h3>
+                    <p class="foo text-center">Hola, mi nombre es <strong>Joaquin Araujo</strong>, soy Venezolano, natal de la cálida y soleada ciudad de <strong>Maracaibo</strong>. Soy de los que apuesta por <strong>JavaScript</strong> porque sencillamente <strong>¡JavaScript se comió al mundo!</strong> Me enfoco más al área del backend (con <strong>Nodejs</strong>).</p>
+                    <p class="foo text-center"><strong>No me limito a aprender cosas nuevas</strong> ya que siempre ando en constante aprendizaje. <strong>Me gusta compartir lo que aprendo</strong> es por ello que realicé esta guía.</p>
+                    <p class="foo text-center">Si quieres comunicarte conmigo puedes hacerlo a través de mi cuenta en twitter <strong><a href="https://twitter.com/JoaquinAraujoJS" target="_blank">@JoaquinAraujoJS</a></strong>. Estoy abierto a cualquier proyecto <strong>¡con ganas de cambiar al mundo!</strong></p>
+                </div>
+                <div class="col-sm-4">
+                    <img src="https://avatars0.githubusercontent.com/u/20958348?v=4&s=460" alt="Joaquin Araujo" class="img-rounded">
+                </div>
+            </div>
+            <!-- Créditos a Platzi -->
+        </div>
+        <div class="container-fluid">
+            <p class="text-center black">Esta guía fue realizada por <a href="https://twitter.com/JoaquinAraujoJS" target="_blank" class="black">Joaquin Araujo</a> y es un resumen del <a href="https://platzi.com/cursos/linux/" target="_blank" class="black">Curso de Administración de Servidores de Linux</a> de <a href="https://platzi.com" target="_blank" class="black">Platzi</a></p>
+        </div>
+    </footer>
+</body>
+</html>
